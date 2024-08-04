@@ -1,45 +1,44 @@
 package com.hendro.demo.model;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
-@Table(name = "users")
-
 public class User implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @Column(unique = true, nullable = false)
     private String username;
-    @Column(unique = true)
-    private String password;
     @Column(unique = true, nullable = false)
     private String email;
-    @Column(name = "vertification_code")
-    private String vertificationCode;
-    @Column(name = "vertification_expiration")
-    private LocalDateTime vertificationCodeExpireAt;
+    @Column(nullable = false)
+    private String password;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
+    @Column(name = "verification_expiration")
+    private LocalDateTime verificationCodeExpiresAt;
     private boolean enabled;
 
-    public User(String username, String password, String email) {
+    // constructor for creating an unverified user
+    public User(String username, String email, String password) {
         this.username = username;
-        this.password = password;
         this.email = email;
+        this.password = password;
     }
 
+    // default constructor
     public User() {
     }
 
@@ -48,6 +47,7 @@ public class User implements UserDetails {
         return List.of();
     }
 
+    // TODO: add proper boolean checks
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -67,5 +67,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
-
 }
